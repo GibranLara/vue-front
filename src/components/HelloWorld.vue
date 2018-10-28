@@ -51,6 +51,7 @@
     <v-data-table
       :headers="headers"
       :items="proyectos"
+      :search="search"
       hide-actions
       class="elevation-1"
     >
@@ -79,9 +80,12 @@
           </v-icon>
         </td>
       </template>
-      <template slot="no-data">
+      <v-alert slot="no-results" :value="true" color="error" icon="warning">
+        Su búsqueda para "{{ search }}" no entregó resultados.
+      </v-alert>
+      <!-- <template slot="no-data">
         <v-btn color="primary" @click="initialize">Reiniciar</v-btn>
-      </template>
+      </template> -->
     </v-data-table>
   </div>
   </v-app>
@@ -91,6 +95,7 @@
 export default {
   name: 'HelloWorld',
   data: () => ({
+    search: '',
     dialog: false,
     headers: [
       {
@@ -140,6 +145,16 @@ export default {
         {
           proyecto: 'Spring + Kotlin + Vue',
           area: 'Sistemas',
+          fecha: '27/01/2018'
+        },
+        {
+          proyecto: 'Mongo DB',
+          area: 'Area 51',
+          fecha: '27/01/2018'
+        },
+        {
+          proyecto: 'Vue',
+          area: 'Delibera',
           fecha: '27/01/2018'
         }
       ]
