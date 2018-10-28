@@ -18,7 +18,7 @@
 
       <v-spacer></v-spacer>
       <v-dialog v-model="dialog" max-width="500px">
-        <v-btn slot="activator" color="primary" dark class="mb-2">Nueva Proyecto</v-btn>
+        <v-btn slot="activator" color="primary" dark class="mb-2">Nuevo Proyecto</v-btn>
         <v-card>
           <v-card-title>
             <span class="headline">{{ formTitle }}</span>
@@ -28,13 +28,13 @@
             <v-container grid-list-md>
               <v-layout wrap>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.name" label="Proyecto"></v-text-field>
+                  <v-text-field v-model="editedItem.proyecto" label="Proyecto"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.calories" label="Área"></v-text-field>
+                  <v-text-field v-model="editedItem.area" label="Área"></v-text-field>
                 </v-flex>
                 <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.fat" label="Fecha"></v-text-field>
+                  <v-text-field v-model="editedItem.fecha" label="Fecha"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -50,26 +50,37 @@
     </v-toolbar>
     <v-data-table
       :headers="headers"
-      :items="desserts"
+      :items="proyectos"
       hide-actions
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td>{{ props.item.name }}</td>
-        <td class="text-xs-center">{{ props.item.calories }}</td>
-        <td class="text-xs-center">{{ props.item.fat }}</td>
-        <td class="text-xs-center">{{ props.item.carbs }}</td>
+        <td class="text-xs-center">{{ props.item.proyecto }}</td>
+        <td class="text-xs-center">{{ props.item.area }}</td>
+        <td class="text-xs-center">{{ props.item.fecha }}</td>
+        <td class="text-xs-center">
+          <v-btn class="info">
+            Ver
+          </v-btn>
+        </td>
         <td class="justify-center layout px-0">
-          <v-icon small class="mr-2" @click="editItem(props.item)">
+          <v-icon
+            small
+            class="mr-2"
+            @click="editItem(props.item)"
+          >
             edit
           </v-icon>
-          <v-icon small @click="deleteItem(props.item)">
+          <v-icon
+            small
+            @click="deleteItem(props.item)"
+          >
             delete
           </v-icon>
         </td>
       </template>
       <template slot="no-data">
-        <v-btn color="primary" @click="initialize">Reset</v-btn>
+        <v-btn color="primary" @click="initialize">Reiniciar</v-btn>
       </template>
     </v-data-table>
   </div>
@@ -86,26 +97,24 @@ export default {
         text: 'Proyecto',
         align: 'center',
         sortable: false,
-        value: 'name'
+        value: 'proyecto'
       },
-      { text: 'Área', align: 'center', value: 'calories' },
-      { text: 'Fecha', align: 'center', value: 'fat' },
-      { text: 'Reuniones', align: 'center', value: 'carbs', sortable: false },
-      { text: 'Acciones', align: 'center', value: 'name', sortable: false }
+      { text: 'Área', align: 'center', value: 'area' },
+      { text: 'Fecha', align: 'center', value: 'fecha' },
+      { text: 'Reuniones', align: 'center', value: 'proyecto', sortable: false },
+      { text: 'Acciones', align: 'center', value: 'proyecto', sortable: false }
     ],
-    desserts: [],
+    proyectos: [],
     editedIndex: -1,
     editedItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0
+      proyecto: '',
+      area: 0,
+      fecha: 0
     },
     defaultItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0
+      proyecto: '',
+      area: 0,
+      fecha: 0
     }
   }),
 
@@ -127,25 +136,24 @@ export default {
 
   methods: {
     initialize () {
-      this.desserts = [
+      this.proyectos = [
         {
-          name: 'Spring + Kotlin + Vue',
-          calories: 159,
-          fat: 6.0,
-          carbs: 24
+          proyecto: 'Spring + Kotlin + Vue',
+          area: 'Sistemas',
+          fecha: '27/01/2018'
         }
       ]
     },
 
     editItem (item) {
-      this.editedIndex = this.desserts.indexOf(item)
+      this.editedIndex = this.proyectos.indexOf(item)
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
 
     deleteItem (item) {
-      const index = this.desserts.indexOf(item)
-      confirm('¿Está seguro de eliminar esta reunión?') && this.desserts.splice(index, 1)
+      const index = this.proyectos.indexOf(item)
+      confirm('¿Está seguro de eliminar esta reunión?') && this.proyectos.splice(index, 1)
     },
 
     close () {
@@ -158,9 +166,9 @@ export default {
 
     save () {
       if (this.editedIndex > -1) {
-        Object.assign(this.desserts[this.editedIndex], this.editedItem)
+        Object.assign(this.proyectos[this.editedIndex], this.editedItem)
       } else {
-        this.desserts.push(this.editedItem)
+        this.proyectos.push(this.editedItem)
       }
       this.close()
     }
