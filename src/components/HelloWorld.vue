@@ -6,7 +6,7 @@
         <!-- <v-btn color="success">Success</v-btn> -->
       <!-- </div>
     </v-container> -->
-<div>
+<v-container>
     <v-toolbar flat color="white">
      <v-text-field
         v-model="search"
@@ -27,14 +27,14 @@
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.proyecto" label="Proyecto"></v-text-field>
+                <v-flex xs12 sm12 md12>
+                  <v-text-field v-model="editedItem.nombre" required label="Nombre"></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.area" label="Área"></v-text-field>
+                <v-flex xs12 sm12 md6>
+                  <v-text-field v-model="editedItem.area" required label="Área"></v-text-field>
                 </v-flex>
-                <v-flex xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.fecha" label="Fecha"></v-text-field>
+                <v-flex xs12 sm12 md6>
+                  <v-text-field v-model="editedItem.fecha" required label="Fecha"></v-text-field>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -56,7 +56,7 @@
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
-        <td class="text-xs-center">{{ props.item.proyecto }}</td>
+        <td class="text-xs-center">{{ props.item.nombre }}</td>
         <td class="text-xs-center">{{ props.item.area }}</td>
         <td class="text-xs-center">{{ props.item.fecha }}</td>
         <td class="text-xs-center">
@@ -87,37 +87,42 @@
         <v-btn color="primary" @click="initialize">Reiniciar</v-btn>
       </template> -->
     </v-data-table>
-  </div>
+  </v-container>
   </v-app>
 </template>
 
 <script>
+// Solo se debe de importar axios donde se necesite.
+import axios from 'axios'
+
 export default {
   name: 'HelloWorld',
   data: () => ({
     search: '',
     dialog: false,
+    loading: true,
     headers: [
       {
         text: 'Proyecto',
         align: 'center',
         sortable: false,
-        value: 'proyecto'
+        value: 'nombre'
       },
       { text: 'Área', align: 'center', value: 'area' },
       { text: 'Fecha', align: 'center', value: 'fecha' },
       { text: 'Reuniones', align: 'center', value: 'proyecto', sortable: false },
       { text: 'Acciones', align: 'center', value: 'proyecto', sortable: false }
     ],
+    totalProyectos: 0,
     proyectos: [],
     editedIndex: -1,
     editedItem: {
-      proyecto: '',
+      nombre: '',
       area: 0,
       fecha: 0
     },
     defaultItem: {
-      proyecto: '',
+      nombre: '',
       area: 0,
       fecha: 0
     }
@@ -125,40 +130,29 @@ export default {
 
   computed: {
     formTitle () {
-      return this.editedIndex === -1 ? 'Nueva Reunión' : 'Editar Reunión'
+      return this.editedIndex === -1 ? 'Nueva Proyecto' : 'Editar Proyecto'
     }
   },
-
   watch: {
     dialog (val) {
       val || this.close()
     }
   },
-
-  created () {
-    this.initialize()
+  mounted () {
+    axios
+      .get('http://localhost:8080/proyectos/all')
+      .then(datos => {
+        console.log(datos.data)
+        this.proyectos = datos.data
+      })
+      .catch(e => {
+        this.errors.push(e)
+      })
   },
+  created () {},
 
   methods: {
-    initialize () {
-      this.proyectos = [
-        {
-          proyecto: 'Spring + Kotlin + Vue',
-          area: 'Sistemas',
-          fecha: '27/01/2018'
-        },
-        {
-          proyecto: 'Mongo DB',
-          area: 'Area 51',
-          fecha: '27/01/2018'
-        },
-        {
-          proyecto: 'Vue',
-          area: 'Delibera',
-          fecha: '27/01/2018'
-        }
-      ]
-    },
+    initialize () {},
 
     editItem (item) {
       this.editedIndex = this.proyectos.indexOf(item)
@@ -182,8 +176,10 @@ export default {
     save () {
       if (this.editedIndex > -1) {
         Object.assign(this.proyectos[this.editedIndex], this.editedItem)
+        console.log(Object.assign(this.proyectos[this.editedIndex], this.editedItem))
       } else {
         this.proyectos.push(this.editedItem)
+        console.log(this.editedItem)
       }
       this.close()
     }

@@ -2,7 +2,7 @@
   <div id="app">
     <v-app>
       <v-content>
-        <img src="./assets/logo.png">
+        <!-- <img src="./assets/logo.png"> -->
         <router-view/>
       </v-content>
     </v-app>
