@@ -25,19 +25,38 @@
           </v-card-title>
           <!-- Este es el dialogo de edición-->
           <v-card-text>
+            <!-- Para poder validar debe de haber un form para hacer referencia -->
+            <v-form v-model="valid" ref="form" lazy-validation>
             <v-container grid-list-md>
               <v-layout wrap>
-                <v-flex xs12 sm12 md12>
-                  <v-text-field v-model="editedItem.nombre" required label="Nombre"></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm12 md6>
-                  <v-text-field v-model="editedItem.area" required label="Área"></v-text-field>
-                </v-flex>
-                <v-flex xs12 sm12 md6>
-                  <v-text-field v-model="editedItem.fecha" required label="Fecha"></v-text-field>
-                </v-flex>
+                   <v-flex xs12 sm12 md12>
+                    <v-text-field
+                      v-model="editedItem.nombre"
+                      :rules="reglasNombre"
+                      name="nombre"
+                      label="Nombre"
+                      required>
+                    </v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm12 md6>
+                    <v-text-field
+                    v-model="editedItem.area"
+                    :rules="reglasArea"
+                    label="Área"
+                    required>
+                    </v-text-field>
+                  </v-flex>
+                  <v-flex xs12 sm12 md6>
+                    <v-text-field
+                    v-model="editedItem.fecha"
+                    :rules="reglasFecha"
+                    label="Fecha"
+                    required>
+                    </v-text-field>
+                  </v-flex>
               </v-layout>
             </v-container>
+                </v-form>
           </v-card-text>
 
           <v-card-actions>
@@ -60,22 +79,15 @@
         <td class="text-xs-center">{{ props.item.area }}</td>
         <td class="text-xs-center">{{ props.item.fecha }}</td>
         <td class="text-xs-center">
-          <v-btn class="info">
-            Ver
+          <v-btn class="info" dark>
+            <v-icon dark>visibility</v-icon>
           </v-btn>
         </td>
         <td class="justify-center layout px-0">
-          <v-icon
-            small
-            class="mr-2"
-            @click="editItem(props.item)"
-          >
+          <v-icon medium class="mr-2" @click="editItem(props.item)">
             edit
           </v-icon>
-          <v-icon
-            small
-            @click="deleteItem(props.item)"
-          >
+          <v-icon medium @click="deleteItem(props.item)">
             delete
           </v-icon>
         </td>
@@ -100,6 +112,16 @@ export default {
   data: () => ({
     search: '',
     dialog: false,
+    valid: true,
+    reglasNombre: [
+      v => !!v || 'El nombre es requerido.'
+    ],
+    reglasArea: [
+      v => !!v || 'El área es requerida.'
+    ],
+    reglasFecha: [
+      v => !!v || 'La fecha es requerida.'
+    ],
     loading: true,
     headers: [
       {
@@ -118,19 +140,19 @@ export default {
     editedIndex: -1,
     editedItem: {
       nombre: '',
-      area: 0,
-      fecha: 0
+      area: '',
+      fecha: ''
     },
     defaultItem: {
       nombre: '',
-      area: 0,
-      fecha: 0
+      area: '',
+      fecha: ''
     }
   }),
 
   computed: {
     formTitle () {
-      return this.editedIndex === -1 ? 'Nueva Proyecto' : 'Editar Proyecto'
+      return this.editedIndex === -1 ? 'Nuevo Proyecto' : 'Editar Proyecto'
     }
   },
   watch: {
@@ -139,10 +161,12 @@ export default {
     }
   },
   mounted () {
+    // TODO
     axios
       .get('http://localhost:8080/proyectos/all')
       .then(datos => {
-        console.log(datos.data)
+        // Aquí se recuperan los datos. En el objeto datos y la propiedad data es
+        // donde viene el arreglo de objetos.
         this.proyectos = datos.data
       })
       .catch(e => {
@@ -162,7 +186,13 @@ export default {
 
     deleteItem (item) {
       const index = this.proyectos.indexOf(item)
-      confirm('¿Está seguro de eliminar esta reunión?') && this.proyectos.splice(index, 1)
+      var respuesta = confirm('¿Está seguro de eliminar esta reunión?')
+      if (respuesta) {
+        this.proyectos.splice(index, 1)
+        // Se manda la petición delete con el id del objeto
+        axios
+          .delete('http://localhost:8080/proyectos/proyecto/' + item.id)
+      }
     },
 
     close () {
@@ -174,14 +204,27 @@ export default {
     },
 
     save () {
-      if (this.editedIndex > -1) {
-        Object.assign(this.proyectos[this.editedIndex], this.editedItem)
-        console.log(Object.assign(this.proyectos[this.editedIndex], this.editedItem))
-      } else {
-        this.proyectos.push(this.editedItem)
-        console.log(this.editedItem)
+      if (this.$refs.form.validate()) {
+        if (this.editedIndex > -1) {
+          console.log('Es una edición')
+          Object.assign(this.proyectos[this.editedIndex], this.editedItem)
+          // console.log(this.proyectos[this.editedIndex])
+          axios
+            .put('http://localhost:8080/proyectos/', this.proyectos[this.editedIndex])
+        } else {
+          console.log('Es un nuevo proyecto.')
+          // console.log(this.editedItem)
+          axios
+            .post('http://localhost:8080/proyectos/', this.editedItem)
+            .then(proyecto => {
+              this.proyectos.push(proyecto.data)
+            })
+            .catch(e => {
+              this.errors.push(e)
+            })
+        }
+        this.close()
       }
-      this.close()
     }
   }
 }
