@@ -1,29 +1,15 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Proyectos from '@/components/Proyectos'
-import Reuniones from '@/components/Reuniones'
-import Reunion from '@/components/Reunion'
+import HelloWorld from '@/components/HelloWorld'
 
 Vue.use(Router)
 
 export default new Router({
-  mode: 'abstract',
   routes: [
     {
       path: '/',
-      name: 'Proyectos',
-      component: Proyectos
-    },
-    {
-      path: '/reuniones',
-      name: 'Reuniones',
-      component: Reuniones,
-      props: true
-    },
-    {
-      path: '/reunion',
-      name: 'Reunion',
-      component: Reunion
+      name: 'HelloWorld',
+      component: HelloWorld
     }
   ]
 })
