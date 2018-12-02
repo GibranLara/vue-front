@@ -79,7 +79,7 @@
         <td class="text-xs-center">{{ props.item.area }}</td>
         <td class="text-xs-center">{{ props.item.fecha }}</td>
         <td class="text-xs-center">
-          <v-btn class="info" dark :to="{name: 'Reuniones', params: {proyecto: props.item }}">
+          <v-btn class="info" dark @click="proyectoSeleccionado(props.item)">
             <v-icon dark>visibility</v-icon>
             {{ props.item.id }}
           </v-btn>
@@ -161,8 +161,8 @@ export default {
       val || this.close()
     }
   },
-  mounted () {
-    // TODO
+  mounted () {},
+  created () {
     axios
       .get('http://localhost:8080/proyectos/all')
       .then(datos => {
@@ -174,7 +174,6 @@ export default {
         this.errors.push(e)
       })
   },
-  created () {},
 
   methods: {
     initialize () {},
@@ -229,6 +228,13 @@ export default {
         }
         this.close()
       }
+    },
+
+    proyectoSeleccionado (proyecto) {
+      // Emito un evento con el objeto proyecto
+      this.$root.$emit('enviar', proyecto)
+      // Mando llamar la ruta 'reuniones', misma que cargar el controlador reuniones
+      this.$router.push('reuniones')
     }
   }
 }

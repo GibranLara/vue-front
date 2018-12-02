@@ -163,11 +163,13 @@ export default {
     }
   },
   mounted () {
-    this.reuniones = this.proyecto.reuniones
+    console.log('hola')
+    this.$root.$on('enviar', (data) => {
+      console.log('dsa')
+      console.log(data)
+    })
   },
-  created () {
-    this.proyecto = this.$route.params.proyecto
-  },
+  created () {},
 
   methods: {
     initialize () {},
