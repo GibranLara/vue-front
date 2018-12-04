@@ -5,14 +5,14 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    saludo: 'Hola Chaval'
+    proyecto: ''
   },
   mutations: {
-    change (state, saludo) {
-      state.saludo = saludo
+    change (state, proyecto) {
+      state.proyecto = proyecto
     }
   },
   getters: {
-    saludo: state => state.saludo
+    proyecto: state => state.proyecto
   }
 })
