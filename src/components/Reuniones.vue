@@ -45,7 +45,7 @@
               </v-icon>
             </td>
             <td class="text-xs-center">
-              <v-btn class="success" dark>
+              <v-btn class="success" dark @click="descargarPdf()">
                 Descargar
               </v-btn>
             </td>
@@ -120,6 +120,21 @@ export default {
 
     nuevaReunion () {
       this.$router.push('reunion')
+    },
+
+    descargarPdf () {
+      axios({
+        url: 'http://localhost:8080/ejemplopdf.pdf', // your url
+        method: 'GET',
+        responseType: 'blob'// important
+      }).then((response) => {
+        const url = window.URL.createObjectURL(new Blob([response.data]))
+        const link = document.createElement('a')
+        link.href = url
+        link.setAttribute('download', 'ejemplopdf.pdf')// or any other extension
+        document.body.appendChild(link)
+        link.click()
+      })
     }
   }
 }
