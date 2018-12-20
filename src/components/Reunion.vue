@@ -136,8 +136,10 @@ export default {
     valid: true,
     proyecto: '',
     reunion: {
+      id: '',
       objetivo: '',
-      fecha: ''
+      fecha: '',
+      participantes: []
     },
     objetivoRules: [
       v => !!v || 'El objetivo es requerido.'
@@ -199,21 +201,12 @@ export default {
     this.proyecto = this.$store.getters.proyecto
     // Guardo el objectid de la reunión que fue enviado desde el componente Reuniones
     let reunionIndex = this.$store.getters.idReunion
-
+    // Si ya existe el objeto reunión, es decir, recibo un Id
+    // Voy a igualar la variable local del componente con la de Vuex
     if (!(reunionIndex === '' || undefined)) {
       // En la propiedad reunión guardo una copia POR REFERENCIA
       // del objeto de la reunión trae la copia local del
       this.reunion = this.proyecto.reuniones.find(x => x.id === reunionIndex)
-    } else {
-      let reunion = {
-        id: ObjectID().toHexString(),
-        objetivo: '',
-        fecha: '',
-        participantes: []
-      }
-      console.log(reunion.id)
-      this.proyecto.reuniones.push(reunion)
-      this.reunion = reunion
     }
   },
 
@@ -253,14 +246,22 @@ export default {
       // Si el formulario del encabezado de la reunión es válido
       if (this.$refs.form_reunion.validate()) {
         console.log(this.proyecto)
-        // Se guarda el proyecto en Vuex
+        // Determinar si es una nueva reunión
+        if (this.reunion.id === '') {
+          // Genero un ObjectId para la reunión
+          this.reunion.id = ObjectID().toHexString()
+          // Inserto la reunion en el arreglo de reuniones del proyecto
+          this.proyecto.reuniones.push(this.reunion)
+        }
+        // Guardo nuevamente el proyecto en el ESTADO de Vuex
         this.$store.commit('guardarProyecto', this.proyecto)
+        this.$store.commit('setIdReunion', '')
         // Entonces se guarda en server el 'proyecto' completo con todos los cambios,
         // es decir, proyecto, reuniones y participantes
         axios
           .put('http://localhost:8080/proyectos/', this.proyecto)
+        this.$router.push('reuniones')
       }
-      this.close()
     },
     guardarParticipante () {
       if (this.$refs.form.validate()) {
