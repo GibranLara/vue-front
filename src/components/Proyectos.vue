@@ -7,6 +7,7 @@
       <!-- </div>
     </v-container> -->
 <v-container>
+    <h1>{{ this.$store.getters.proyecto }}</h1>
     <v-toolbar flat color="white">
      <v-text-field
         v-model="search"
@@ -142,12 +143,14 @@ export default {
     editedItem: {
       nombre: '',
       area: '',
-      fecha: ''
+      fecha: '',
+      reuniones: []
     },
     defaultItem: {
       nombre: '',
       area: '',
-      fecha: ''
+      fecha: '',
+      reuniones: []
     }
   }),
 
@@ -174,7 +177,6 @@ export default {
         this.errors.push(e)
       })
   },
-
   methods: {
     initialize () {},
 
@@ -231,8 +233,8 @@ export default {
     },
 
     proyectoSeleccionado (proyecto) {
-      // Emito un evento con el objeto proyecto
-      this.$root.$emit('enviar', proyecto)
+      console.log(proyecto)
+      this.$store.commit('guardarProyecto', proyecto)
       // Mando llamar la ruta 'reuniones', misma que cargar el controlador reuniones
       this.$router.push('reuniones')
     }

@@ -46,7 +46,6 @@
                             <v-text-field
                               v-model="editedItem.nomina"
                               :rules="reglasNomina"
-                              name="nombre"
                               label="No. Nómina"
                               required>
                             </v-text-field>
@@ -90,7 +89,7 @@
             </v-toolbar>
         <v-data-table
           :headers="headers"
-          :items="participantes"
+          :items="reunion.participantes"
           :search="search"
           hide-actions
           class="elevation-1"
@@ -127,6 +126,7 @@
 <script>
 // Solo se debe de importar axios donde se necesite.
 import axios from 'axios'
+import ObjectID from 'bson-objectid'
 
 export default {
   name: 'Reunion',
@@ -135,13 +135,23 @@ export default {
     dialog: false,
     valid: true,
     proyecto: '',
-    reunion: '',
+    reunion: {
+      objetivo: '',
+      fecha: ''
+    },
     objetivoRules: [
       v => !!v || 'El objetivo es requerido.'
     ],
     fechaReunionRules: [
       v => !!v || 'La fecha es requerida.'
     ],
+    reglasNomina: [
+      v => !!v || 'El número de nómina es requerido',
+      v => /^-?\d*$/.test(v) || 'Solo ingrese números.'
+    ],
+    reglasNombre: [],
+    reglasRol: [],
+    reglasArea: [],
     loading: true,
     headers: [
       {
@@ -157,7 +167,6 @@ export default {
       { text: 'Acciones', align: 'center', value: 'firma', sortable: false }
     ],
     totalParticipantes: 0,
-    participantes: [],
     editedIndex: -1,
     editedItem: {
       nomina: '',
@@ -175,7 +184,7 @@ export default {
 
   computed: {
     formTitle () {
-      return this.editedIndex === -1 ? 'Nueva Reunión' : 'Editar Reunión'
+      return this.editedIndex === -1 ? 'Nuevo Participante' : 'Editar Participante'
     }
   },
   watch: {
@@ -184,40 +193,55 @@ export default {
     }
   },
   mounted () {
-    // Guardo el objectid de la reunión que fue enviado desde el componente Reuniones
-    let reunionIndex = this.$route.params.idReunion
-    // En la propiedad reunión guardo una copia del objeto de la reunión correspondiente
-    this.reunion = Object.assign({}, this.proyecto.reuniones.find(x => x.id === reunionIndex))
-    // En la propiedad participantes hago una copia del arreglo de participantes
-    // del objeto original a uno del componente.
-    this.participantes = this.reunion.participantes
   },
   created () {
-    // Recibo el proyecto que es enviado desde componente Reuniones
-    this.proyecto = this.$route.params.proyecto
+    // Recupero el objeto proyecto
+    this.proyecto = this.$store.getters.proyecto
+    // Guardo el objectid de la reunión que fue enviado desde el componente Reuniones
+    let reunionIndex = this.$store.getters.idReunion
+
+    if (!(reunionIndex === '' || undefined)) {
+      // En la propiedad reunión guardo una copia POR REFERENCIA
+      // del objeto de la reunión trae la copia local del
+      this.reunion = this.proyecto.reuniones.find(x => x.id === reunionIndex)
+    } else {
+      let reunion = {
+        id: ObjectID().toHexString(),
+        objetivo: '',
+        fecha: '',
+        participantes: []
+      }
+      console.log(reunion.id)
+      this.proyecto.reuniones.push(reunion)
+      this.reunion = reunion
+    }
   },
 
   methods: {
     initialize () {},
 
     editItem (item) {
-      this.editedIndex = this.participantes.indexOf(item)
+      // Recupero el indice del participante a partir de un objeto participante
+      this.editedIndex = this.reunion.participantes.indexOf(item)
+      // Saco una copia de las propiedades del objeto item.
       this.editedItem = Object.assign({}, item)
       this.dialog = true
     },
 
     deleteItem (item) {
-      const index = this.participantes.indexOf(item)
+      // Recupero el indice del participante que se está editando
+      const index = this.reunion.participantes.indexOf(item)
+      // Pregunto si se desea eliminar
       var respuesta = confirm('¿Está seguro de eliminar esta reunión?')
+      // Si la respuesta es correcta, se elimina el elemento del array de participantes
+      // Splice (indice, cantidad de elementos a borrar)
       if (respuesta) {
-        this.participantes.splice(index, 1)
-        // Se manda la petición delete con el id del objeto
-        axios
-          .delete('http://localhost:8080/proyectos/proyecto/' + item.id)
+        this.reunion.participantes.splice(index, 1)
       }
     },
 
     close () {
+      // Se oculta el dialog mostrado para editar como para crear
       this.dialog = false
       setTimeout(() => {
         this.editedItem = Object.assign({}, this.defaultItem)
@@ -228,21 +252,24 @@ export default {
     save () {
       // Si el formulario del encabezado de la reunión es válido
       if (this.$refs.form_reunion.validate()) {
-        // Entonces se guarda el proyecto completo con todos los cambios
+        console.log(this.proyecto)
+        // Se guarda el proyecto en Vuex
+        this.$store.commit('guardarProyecto', this.proyecto)
+        // Entonces se guarda en server el 'proyecto' completo con todos los cambios,
+        // es decir, proyecto, reuniones y participantes
         axios
-          .put('http://localhost:8080/proyectos/', this.participantes[this.editedIndex])
+          .put('http://localhost:8080/proyectos/', this.proyecto)
       }
       this.close()
     },
     guardarParticipante () {
       if (this.$refs.form.validate()) {
         if (this.editedIndex > -1) {
-          console.log('Es una edición')
-          Object.assign(this.participantes[this.editedIndex], this.editedItem)
-          // console.log(this.proyectos[this.editedIndex])
+          // Se edita y remplaza el participante existente. (Original, Remplazo)
+          Object.assign(this.reunion.participantes[this.editedIndex], this.editedItem)
         } else {
-          console.log('Es un nueva reunión.')
-          this.participantes.push(this.editedItem)
+          // Se inserta el nuevo participante
+          this.reunion.participantes.push(this.editedItem)
         }
         this.close()
       }

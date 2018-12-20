@@ -3,6 +3,7 @@
 // import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
 import Vue from 'vue'
 import App from './App'
+import store from './store'
 import router from './router'
 import Vuetify from 'vuetify'
 import 'material-design-icons-iconfont/dist/material-design-icons.css' // Forzozamente deben cargarse antes que el css main
@@ -14,6 +15,7 @@ Vue.config.productionTip = false
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  store,
   router,
   components: { App },
   template: '<App/>',
