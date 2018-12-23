@@ -34,7 +34,7 @@
             <td class="text-xs-center">{{ props.item.objetivo }}</td>
             <td class="text-xs-center">{{ props.item.fecha }}</td>
             <td class="justify-center layout px-0">
-              <v-btn class="info" dark>
+              <v-btn class="info" dark @click="solicitarFirmas(props.item.id)">
                 Firmar
               </v-btn>
               <v-btn class="info" dark @click="reunionSeleccionada(props.item)">
@@ -135,6 +135,11 @@ export default {
         document.body.appendChild(link)
         link.click()
       })
+    },
+
+    solicitarFirmas (idReunion) {
+      this.$store.commit('setIdReunion', idReunion)
+      this.$router.push('firmar')
     }
   }
 }

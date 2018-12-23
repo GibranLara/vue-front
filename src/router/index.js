@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Proyectos from '@/components/Proyectos'
 import Reuniones from '@/components/Reuniones'
 import Reunion from '@/components/Reunion'
+import SolicitarFirmas from '@/components/SolicitarFirmas'
 
 Vue.use(Router)
 
@@ -24,6 +25,11 @@ export default new Router({
       path: '/reunion',
       name: 'Reunion',
       component: Reunion
+    },
+    {
+      path: '/firmar',
+      name: 'Firmar',
+      component: SolicitarFirmas
     }
   ]
 })
