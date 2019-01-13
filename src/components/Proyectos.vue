@@ -1,13 +1,7 @@
 <template>
   <v-app>
-    <!-- <v-container class="bred">
-      <div class="hello">
-        <h1>{{ msg }}</h1> -->
-        <!-- <v-btn color="success">Success</v-btn> -->
-      <!-- </div>
-    </v-container> -->
 <v-container>
-    <h1>{{ this.$store.getters.proyecto }}</h1>
+    <h5>{{ this.$store.getters.proyecto }}</h5>
     <v-toolbar flat color="white">
      <v-text-field
         v-model="search"

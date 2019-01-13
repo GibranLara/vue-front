@@ -1,5 +1,11 @@
 <template>
   <v-app>
+    <v-toolbar class="elevation-0">
+      <v-btn icon to="/">
+        <v-icon>arrow_back</v-icon>
+      </v-btn>
+      <v-toolbar-title> </v-toolbar-title>
+    </v-toolbar>
     <v-container>
         <v-toolbar flat color="white">
         <v-text-field
@@ -55,9 +61,6 @@
           </v-alert>
         </v-data-table>
       </v-container>
-      <v-btn class="info" dark to="/">
-      Volver
-    </v-btn>
     </v-app>
 </template>
 

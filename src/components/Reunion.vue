@@ -1,5 +1,11 @@
 <template>
   <v-app>
+    <v-toolbar class="elevation-0">
+      <v-btn icon @click="volver()">
+        <v-icon>arrow_back</v-icon>
+      </v-btn>
+      <v-toolbar-title> </v-toolbar-title>
+    </v-toolbar>
     <v-container>
       <!-- Formulario para editar el encabezado de la reunión -->
 <h2 class="text-sm-left mb-1">Detalle Reunión</h2>
@@ -117,9 +123,6 @@
           </template> -->
         </v-data-table>
       </v-container>
-      <v-btn class="info" dark to="/">
-        Volver
-      </v-btn>
     </v-app>
 </template>
 
@@ -274,6 +277,10 @@ export default {
         }
         this.close()
       }
+    },
+    volver () {
+      this.$store.commit('setIdReunion', '')
+      this.$router.push('reuniones')
     }
   }
 }
