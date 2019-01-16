@@ -13,6 +13,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "bson-objectid": "^1.2.4",
+    "html2canvas": "^1.0.0-alpha.12",
+    "jspdf": "^1.5.3",
     "material-design-icons-iconfont": "^4.0.2",
     "require": "^2.4.20",
     "requirejs": "^2.3.6",

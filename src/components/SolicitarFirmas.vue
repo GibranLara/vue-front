@@ -1,10 +1,40 @@
 <template>
   <v-app>
+    <v-dialog v-model="dialog_descarga" max-width="500px">
+        <v-card>
+        <v-card-title>
+          <span class="headline"> Descargar</span>
+        </v-card-title>
+              <v-layout row wrap>
+                <v-flex xs12 sm12 md6>
+                <p class="">Seleccione su formato de descarga:</p>
+              </v-flex>
+              </v-layout>
+              <v-spacer></v-spacer>
+          <v-layout row wrap pb-3>
+              <v-flex xs12 sm12 md6>
+                <v-btn large @click="descargarPase('png')" color="info">
+                  <v-icon>image</v-icon> .PNG
+                </v-btn>
+              </v-flex>
+              <v-flex xs12 sm12 md6>
+                <v-btn large @click="descargarPase('pdf')" color="error">
+                  <v-icon>picture_as_pdf</v-icon> .PDF
+                </v-btn>
+              </v-flex>
+          </v-layout>
+      </v-card>
+    </v-dialog>
+
     <v-toolbar class="elevation-0">
       <v-btn icon @click="volver()">
         <v-icon>arrow_back</v-icon>
       </v-btn>
       <v-toolbar-title> </v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-btn icon @click="dialog_descarga=true">
+        <v-icon>save_alt</v-icon>
+      </v-btn>
     </v-toolbar>
     <v-container>
       <v-dialog v-model="dialog" max-width="500px">
@@ -46,9 +76,65 @@
         </v-layout>
       </v-form>
     </v-container>
+      <!-- Encabezado de la datatable -->
+      <v-data-table
+        :headers="headers"
+        :items="reunion.participantes"
+        hide-actions
+        class="elevation-1"
+      >
+        <template slot="items" slot-scope="props">
+          <td class="text-xs-center">{{ props.item.nomina }}</td>
+          <td class="text-xs-center">{{ props.item.nombre }}</td>
+          <td class="text-xs-center">{{ props.item.rol }}</td>
+          <td class="text-xs-center">{{ props.item.area }}</td>
+          <td class="text-xs-center">
+            <img :src="props.item.firma" v-bind:alt="props.item.firma" width=100 height="auto">
+          </td>
+          <td class="text-xs-center">
+            <v-btn @click="activarDialog(props.item.nomina)" class="info" dark>
+              Firmar
+            </v-btn>
+          </td>
+        </template>
+        <v-alert slot="no-results" :value="true" color="error" icon="warning">
+          Su búsqueda para "{{ search }}" no entregó resultados.
+        </v-alert>
+        <!-- <template slot="no-data">
+          <v-btn color="primary" @click="initialize">Reiniciar</v-btn>
+        </template> -->
+      </v-data-table>
+    </v-container>
+
+    <v-container class="signature-pad fluid page pt-0" id="pase-de-lista">
+    <v-container grid-list-md class="pa-0 mt-3">
+      <v-layout row wrap clas>
+          <v-flex md12>
+            <h3>HOJA DE REGISTRO</h3>
+          </v-flex>
+      </v-layout>
+      <v-form ref="form_reunion">
+        <v-layout row wrap>
+          <v-flex md9>
+            <v-text-field
+                :value="'Objetivo: '+reunion.objetivo"
+                readonly
+                >
+            </v-text-field>
+          </v-flex>
+          <v-flex md3>
+            <v-text-field
+            :value="'Fecha: '+ reunion.fecha"
+            readonly
+            >
+            </v-text-field>
+          </v-flex>
+        </v-layout>
+      </v-form>
+    </v-container>
         <!-- Encabezado de la datatable -->
         <v-data-table
-          :headers="headers"
+          :headers="headers_print"
           :items="reunion.participantes"
           hide-actions
           class="elevation-1"
@@ -60,11 +146,6 @@
             <td class="text-xs-center">{{ props.item.area }}</td>
             <td class="text-xs-center">
               <img :src="props.item.firma" v-bind:alt="props.item.firma" width=100 height="auto">
-            </td>
-            <td class="text-xs-center">
-              <v-btn @click="activarDialog(props.item.nomina)" class="info" dark>
-                Firmar
-              </v-btn>
             </td>
           </template>
           <v-alert slot="no-results" :value="true" color="error" icon="warning">
@@ -82,6 +163,8 @@
 // Solo se debe de importar axios donde se necesite.
 import axios from 'axios'
 import SignaturePad from 'signature_pad'
+import html2canvas from 'html2canvas'
+import * as JsPDF from 'jspdf'
 
 export default {
   name: 'Reunion',
@@ -91,6 +174,7 @@ export default {
     signaturePad: '',
     canvas: '',
     dialog: false,
+    dialog_descarga: false,
     valid: true,
     noNomina: '',
     proyecto: '',
@@ -124,8 +208,20 @@ export default {
       {text: 'Nombre', align: 'center', value: 'nombre', sortable: false},
       { text: 'Rol/Puesto', align: 'center', value: 'fecha', sortable: false },
       { text: 'Área', align: 'center', value: 'rol', sortable: false },
-      { text: 'Preview', align: 'center', value: 'area', sortable: false },
+      { text: 'Firma', align: 'center', value: 'area', sortable: false },
       { text: '', align: 'center', value: 'area', sortable: false }
+    ],
+    headers_print: [
+      {
+        text: 'No. Nómina',
+        align: 'center',
+        sortable: false,
+        value: 'nomina'
+      },
+      {text: 'Nombre', align: 'center', value: 'nombre', sortable: false},
+      { text: 'Rol/Puesto', align: 'center', value: 'fecha', sortable: false },
+      { text: 'Área', align: 'center', value: 'rol', sortable: false },
+      { text: 'Firma', align: 'center', value: 'area', sortable: false }
     ],
     totalParticipantes: 0,
     editedIndex: -1,
@@ -239,6 +335,28 @@ export default {
     volver () {
       this.$store.commit('setIdReunion', '')
       this.$router.push('reuniones')
+    },
+    descargarPase (opcion) {
+      this.dialog_descarga = true
+
+      if (opcion === 'png') {
+        html2canvas(document.querySelector('#pase-de-lista')).then(canvas => {
+          var image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream')
+          var link = document.createElement('a')
+          link.download = new Date().toJSON().slice(0, 10).replace(/-/g, '.') + '.png'
+          link.href = image
+          link.click()
+        })
+      } else if (opcion === 'pdf') {
+        html2canvas(document.querySelector('#pase-de-lista')).then(canvas => {
+          var image = canvas.toDataURL('image/png')
+          var pdf = new JsPDF({
+            orientation: 'landscape'
+          })
+          pdf.addImage(image, 'PNG', 0, 0)
+          pdf.save('autoprint.pdf')
+        })
+      }
     }
   }
 }
@@ -248,5 +366,16 @@ export default {
 <style scoped>
 .signature-pad {
   border: 1px solid red;
+}
+
+.page {
+    width: 29.7cm;
+    min-height: 21cm;
+    padding: 2cm;
+    margin: 1cm auto;
+    border: 1px #D3D3D3 solid;
+    border-radius: 5px;
+    background: white;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
 }
 </style>
