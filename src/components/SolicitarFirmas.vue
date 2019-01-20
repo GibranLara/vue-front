@@ -1,31 +1,32 @@
 <template>
   <v-app>
+    <!-- Dialogo de descarga -->
     <v-dialog v-model="dialog_descarga" max-width="500px">
-        <v-card>
+      <v-card>
         <v-card-title>
           <span class="headline"> Descargar</span>
         </v-card-title>
-              <v-layout row wrap>
-                <v-flex xs12 sm12 md6>
-                <p class="">Seleccione su formato de descarga:</p>
-              </v-flex>
-              </v-layout>
-              <v-spacer></v-spacer>
-          <v-layout row wrap pb-3>
-              <v-flex xs12 sm12 md6>
-                <v-btn large @click="descargarPase('png')" color="info">
-                  <v-icon>image</v-icon> .PNG
-                </v-btn>
-              </v-flex>
-              <v-flex xs12 sm12 md6>
-                <v-btn large @click="descargarPase('pdf')" color="error">
-                  <v-icon>picture_as_pdf</v-icon> .PDF
-                </v-btn>
-              </v-flex>
-          </v-layout>
+        <v-layout row wrap>
+          <v-flex xs12 sm12 md6>
+            <p>Seleccione su formato de descarga:</p>
+          </v-flex>
+        </v-layout>
+        <v-spacer></v-spacer>
+        <v-layout row wrap pb-3>
+            <v-flex xs12 sm12 md6>
+              <v-btn large @click="descargarPase('png')" color="info">
+                <v-icon>image</v-icon> .PNG
+              </v-btn>
+            </v-flex>
+            <v-flex xs12 sm12 md6>
+              <v-btn large @click="descargarPase('pdf')" color="error">
+                <v-icon>picture_as_pdf</v-icon> .PDF
+              </v-btn>
+            </v-flex>
+        </v-layout>
       </v-card>
     </v-dialog>
-
+    <!-- Barra de menú superior -->
     <v-toolbar class="elevation-0">
       <v-btn icon @click="volver()">
         <v-icon>arrow_back</v-icon>
@@ -39,43 +40,43 @@
     <v-container>
       <v-dialog v-model="dialog" max-width="500px">
         <v-card>
-        <v-card-title>
-          <span class="headline">{{ formTitle }}</span>
-        </v-card-title>
-          <v-container>
-            <canvas id="signature-pad" class="signature-pad">
-            </canvas>
-          </v-container>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="guardarFirma()">Guardar</v-btn>
-          <v-btn @click="limpiarFirma()">Limpiar</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <!-- Formulario para editar el encabezado de la reunión -->
-    <v-container grid-list-md class="pa-0">
-      <v-form ref="form_reunion">
-        <v-layout row wrap>
-          <v-flex md6>
-            <v-text-field
-                :value="reunion.objetivo"
-                label="Objetivo"
-                readonly
-                >
-            </v-text-field>
-          </v-flex>
-          <v-flex md6>
-            <v-text-field
-            :value="reunion.fecha"
-            label="Fecha"
-            readonly
-            >
-            </v-text-field>
-          </v-flex>
-        </v-layout>
-      </v-form>
-    </v-container>
+          <v-card-title>
+            <span class="headline">{{ formTitle }}</span>
+          </v-card-title>
+            <v-container>
+              <canvas id="signature-pad" class="signature-pad">
+              </canvas>
+            </v-container>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn @click="guardarFirma()">Guardar</v-btn>
+            <v-btn @click="limpiarFirma()">Limpiar</v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+      <!-- Formulario para editar el encabezado de la reunión -->
+      <v-container grid-list-md class="pa-0">
+        <v-form ref="form_reunion">
+          <v-layout row wrap>
+            <v-flex md6>
+              <v-text-field
+                  :value="reunion.objetivo"
+                  label="Objetivo"
+                  readonly
+                  >
+              </v-text-field>
+            </v-flex>
+            <v-flex md6>
+              <v-text-field
+              :value="reunion.fecha"
+              label="Fecha"
+              readonly
+              >
+              </v-text-field>
+            </v-flex>
+          </v-layout>
+        </v-form>
+      </v-container>
       <!-- Encabezado de la datatable -->
       <v-data-table
         :headers="headers"
@@ -106,57 +107,77 @@
       </v-data-table>
     </v-container>
 
-    <v-container class="signature-pad fluid page pt-0" id="pase-de-lista">
-    <v-container grid-list-md class="pa-0 mt-3">
-      <v-layout row wrap clas>
-          <v-flex md12>
-            <h3>HOJA DE REGISTRO</h3>
-          </v-flex>
-      </v-layout>
-      <v-form ref="form_reunion">
-        <v-layout row wrap>
-          <v-flex md9>
-            <v-text-field
-                :value="'Objetivo: '+reunion.objetivo"
-                readonly
-                >
-            </v-text-field>
-          </v-flex>
-          <v-flex md3>
-            <v-text-field
-            :value="'Fecha: '+ reunion.fecha"
-            readonly
-            >
-            </v-text-field>
-          </v-flex>
+    <!--Div oculto para imprimir -->
+    <v-container class="fluid page pt-0" id="pase-de-lista">
+      <v-container grid-list-md class="pa-0 mt-3">
+        <v-layout row wrap clas>
+            <v-flex md12>
+              <h3>HOJA DE REGISTRO</h3>
+            </v-flex>
         </v-layout>
-      </v-form>
-    </v-container>
-        <!-- Encabezado de la datatable -->
-        <v-data-table
-          :headers="headers_print"
-          :items="reunion.participantes"
-          hide-actions
-          class="elevation-1"
-        >
-          <template slot="items" slot-scope="props">
-            <td class="text-xs-center">{{ props.item.nomina }}</td>
-            <td class="text-xs-center">{{ props.item.nombre }}</td>
-            <td class="text-xs-center">{{ props.item.rol }}</td>
-            <td class="text-xs-center">{{ props.item.area }}</td>
-            <td class="text-xs-center">
-              <img :src="props.item.firma" v-bind:alt="props.item.firma" width=100 height="auto">
-            </td>
-          </template>
-          <v-alert slot="no-results" :value="true" color="error" icon="warning">
-            Su búsqueda para "{{ search }}" no entregó resultados.
-          </v-alert>
-          <!-- <template slot="no-data">
-            <v-btn color="primary" @click="initialize">Reiniciar</v-btn>
-          </template> -->
-        </v-data-table>
+        <v-form ref="form_reunion">
+          <v-layout row wrap>
+            <v-flex md9>
+              <v-text-field
+                  :value="'Objetivo: '+reunion.objetivo"
+                  readonly
+                  >
+              </v-text-field>
+            </v-flex>
+            <v-flex md3>
+              <v-text-field
+              :value="'Fecha: '+ reunion.fecha"
+              readonly
+              >
+              </v-text-field>
+            </v-flex>
+          </v-layout>
+        </v-form>
       </v-container>
-    </v-app>
+      <!-- Encabezado de la datatable -->
+      <v-data-table
+        :headers="headers_print"
+        :items="reunion.participantes"
+        hide-actions
+        class="elevation-1">
+        <template slot="items" slot-scope="props">
+          <td class="text-xs-center">{{ props.item.nomina }}</td>
+          <td class="text-xs-center">{{ props.item.nombre }}</td>
+          <td class="text-xs-center">{{ props.item.rol }}</td>
+          <td class="text-xs-center">{{ props.item.area }}</td>
+          <td class="text-xs-center">
+            <img :src="props.item.firma" v-bind:alt="props.item.firma" width=100 height="auto">
+          </td>
+        </template>
+        <v-alert slot="no-results" :value="true" color="error" icon="warning">
+          Su búsqueda para "{{ search }}" no entregó resultados.
+        </v-alert>
+        <!-- <template slot="no-data">
+          <v-btn color="primary" @click="initialize">Reiniciar</v-btn>
+        </template> -->
+      </v-data-table>
+
+      <v-container class="pa-0 ma-0 grid-list-md" id="footer-pase-de-lista">
+        <v-layout row wrap>
+            <v-flex class="pa-0">
+              <img src="../assets/150x100.png" alt="1" />
+            </v-flex>
+            <v-flex class="pa-0">
+              <img src="../assets/150x100.png" alt="1" />
+            </v-flex>
+            <v-flex class="pa-0">
+              <img src="../assets/150x100.png" alt="1" />
+            </v-flex>
+            <v-flex class="pa-0">
+              <img src="../assets/150x100.png" alt="1" />
+            </v-flex>
+            <v-flex class="pa-0">
+              <img src="../assets/150x100.png" alt="1" />
+            </v-flex>
+        </v-layout>
+      </v-container>
+    </v-container>
+  </v-app>
 </template>
 
 <script>
@@ -368,14 +389,27 @@ export default {
   border: 1px solid red;
 }
 
+#pase-de-lista {
+  display: none;
+}
+
 .page {
+    position: relative;
+    padding-bottom: 100px;
     width: 29.7cm;
-    min-height: 21cm;
+    min-height: 21.5cm;
     padding: 2cm;
     margin: 1cm auto;
     border: 1px #D3D3D3 solid;
     border-radius: 5px;
     background: white;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+#footer-pase-de-lista {
+  position: absolute;
+  bottom: 0;
+  height: 100px;
+  width: 86.5%;
 }
 </style>
