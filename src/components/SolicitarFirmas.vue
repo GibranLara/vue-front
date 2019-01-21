@@ -240,7 +240,7 @@ export default {
         value: 'nomina',
         class: ['grey lighten-3', 'black--text']
       },
-      { text: 'Nombre', align: 'center', value: 'nombre', sortable: false, class: ['grey lighten-3', 'black--text']},
+      {text: 'Nombre', align: 'center', value: 'nombre', sortable: false, class: ['grey lighten-3', 'black--text']},
       { text: 'Rol/Puesto', align: 'center', value: 'fecha', sortable: false, class: ['grey lighten-3', 'black--text'] },
       { text: 'Área', align: 'center', value: 'rol', sortable: false, class: ['grey lighten-3', 'black--text'] },
       { text: 'Firma', align: 'center', value: 'area', sortable: false, class: ['grey lighten-3', 'black--text'] }

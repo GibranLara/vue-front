@@ -190,7 +190,7 @@ export default {
         text: 'Objetivo',
         align: 'center',
         sortable: false,
-        value: 'objetivo'        
+        value: 'objetivo'
       },
       { text: 'Fecha', align: 'center', value: 'fecha' },
       { text: 'Acciones', align: 'center', value: 'reunion', sortable: false },
