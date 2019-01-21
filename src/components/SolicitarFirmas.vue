@@ -14,7 +14,7 @@
         <v-spacer></v-spacer>
         <v-layout row wrap pb-3>
             <v-flex xs12 sm12 md6>
-              <v-btn large @click="descargarPase('png')" color="info">
+              <v-btn large @click="descargarPase('png')" color="primary">
                 <v-icon>image</v-icon> .PNG
               </v-btn>
             </v-flex>
@@ -49,8 +49,8 @@
             </v-container>
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn @click="guardarFirma()">Guardar</v-btn>
-            <v-btn @click="limpiarFirma()">Limpiar</v-btn>
+            <v-btn class="secondary" @click="limpiarFirma()">Limpiar</v-btn>
+            <v-btn class="primary" @click="guardarFirma()">Guardar</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -93,7 +93,7 @@
             <img :src="props.item.firma" v-bind:alt="props.item.firma" width=100 height="auto">
           </td>
           <td class="text-xs-center">
-            <v-btn @click="activarDialog(props.item.nomina)" class="info" dark>
+            <v-btn @click="activarDialog(props.item.nomina)" class="accent" dark>
               Firmar
             </v-btn>
           </td>
@@ -237,12 +237,13 @@ export default {
         text: 'No. Nómina',
         align: 'center',
         sortable: false,
-        value: 'nomina'
+        value: 'nomina',
+        class: ['grey lighten-3', 'black--text']
       },
-      {text: 'Nombre', align: 'center', value: 'nombre', sortable: false},
-      { text: 'Rol/Puesto', align: 'center', value: 'fecha', sortable: false },
-      { text: 'Área', align: 'center', value: 'rol', sortable: false },
-      { text: 'Firma', align: 'center', value: 'area', sortable: false }
+      { text: 'Nombre', align: 'center', value: 'nombre', sortable: false, class: ['grey lighten-3', 'black--text']},
+      { text: 'Rol/Puesto', align: 'center', value: 'fecha', sortable: false, class: ['grey lighten-3', 'black--text'] },
+      { text: 'Área', align: 'center', value: 'rol', sortable: false, class: ['grey lighten-3', 'black--text'] },
+      { text: 'Firma', align: 'center', value: 'area', sortable: false, class: ['grey lighten-3', 'black--text'] }
     ],
     totalParticipantes: 0,
     editedIndex: -1,

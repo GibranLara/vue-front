@@ -14,7 +14,7 @@
 
       <v-spacer></v-spacer>
       <v-dialog v-model="dialog" max-width="500px" @keydown.esc="dialog=false">
-        <v-btn slot="activator" color="primary" dark class="mb-2">Nuevo Proyecto</v-btn>
+        <v-btn slot="activator" color="primary"  class="mb-2">Nuevo Proyecto</v-btn>
         <v-card>
           <v-card-title>
             <span class="headline">{{ formTitle }}</span>
@@ -57,8 +57,8 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click.native="close">Cancelar</v-btn>
-            <v-btn color="blue darken-1" flat @click.native="save">Guardar</v-btn>
+            <v-btn color="secondary"  @click.native="close">Cancelar</v-btn>
+            <v-btn color="primary" @click.native="save">Guardar</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -75,16 +75,16 @@
         <td class="text-xs-center">{{ props.item.area }}</td>
         <td class="text-xs-center">{{ props.item.fecha }}</td>
         <td class="text-xs-center">
-          <v-btn class="info" dark @click="proyectoSeleccionado(props.item)">
+          <v-btn class="primary"  @click="proyectoSeleccionado(props.item)">
             <v-icon dark>visibility</v-icon>
             <!-- {{ props.item.id }} -->
           </v-btn>
         </td>
         <td class="justify-center layout px-0">
-          <v-icon medium class="mr-2" @click="editItem(props.item)">
+          <v-icon medium class="mr-2" @click="editItem(props.item)" color="black">
             edit
           </v-icon>
-          <v-icon medium @click="deleteItem(props.item)">
+          <v-icon medium @click="deleteItem(props.item)" color="error">
             delete
           </v-icon>
         </td>

@@ -37,7 +37,7 @@
         <v-toolbar flat color="white">
           <h2 class="text-sm-left mb-1">Participantes</h2>
                 <v-spacer></v-spacer>
-              <v-dialog v-model="dialog" max-width="500px">
+              <v-dialog v-model="dialog" max-width="500px" @keydown.esc="dialog=false">
                 <v-btn slot="activator" color="primary" dark class="mb-2">Nuevo participante</v-btn>
                 <v-card>
                   <v-card-title>
@@ -88,8 +88,8 @@
 
                   <v-card-actions>
                     <v-spacer></v-spacer>
-                    <v-btn color="blue darken-1" flat @click.native="close">Cancelar</v-btn>
-                    <v-btn color="blue darken-1" flat @click.native="guardarParticipante">Guardar</v-btn>
+                    <v-btn color="secondary" @click.native="close">Cancelar</v-btn>
+                    <v-btn color="primary" @click.native="guardarParticipante">Guardar</v-btn>
                   </v-card-actions>
                 </v-card>
               </v-dialog>
