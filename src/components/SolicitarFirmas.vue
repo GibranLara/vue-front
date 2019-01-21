@@ -110,7 +110,7 @@
     <!--Div oculto para imprimir -->
     <v-container class="fluid page pt-0" id="pase-de-lista">
       <v-container grid-list-md class="pa-0 mt-3">
-        <v-layout row wrap clas>
+        <v-layout row wrap>
             <v-flex md12>
               <h3>HOJA DE REGISTRO</h3>
             </v-flex>
@@ -276,7 +276,7 @@ export default {
       backgroundColor: 'rgba(0, 0, 0, 0)',
       penColor: 'rgb(0, 0, 0)',
       minWidth: 0.5,
-      maxWidth: 0.5
+      maxWidth: 1.5
     })
   },
   created () {
@@ -361,7 +361,15 @@ export default {
       this.dialog_descarga = true
 
       if (opcion === 'png') {
-        html2canvas(document.querySelector('#pase-de-lista')).then(canvas => {
+        html2canvas(
+          document.querySelector('#pase-de-lista'),
+          {
+          // El documento se clona debido a que si selecciona un div oculto,
+          // este no permite crear la imagen
+            onclone: function (clonedDoc) {
+              clonedDoc.getElementById('pase-de-lista').style.display = 'block'
+            }
+          }).then(canvas => {
           var image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream')
           var link = document.createElement('a')
           link.download = new Date().toJSON().slice(0, 10).replace(/-/g, '.') + '.png'
@@ -369,13 +377,22 @@ export default {
           link.click()
         })
       } else if (opcion === 'pdf') {
-        html2canvas(document.querySelector('#pase-de-lista')).then(canvas => {
+        html2canvas(
+          document.querySelector('#pase-de-lista'),
+          {
+            onclone: function (clonedDoc) {
+              clonedDoc.getElementById('pase-de-lista').style.display = 'block'
+            }
+          }).then(canvas => {
           var image = canvas.toDataURL('image/png')
+
           var pdf = new JsPDF({
             orientation: 'landscape'
           })
+
+          let nombrePdf = new Date().toJSON().slice(0, 10).replace(/-/g, '.') + '.pdf'
           pdf.addImage(image, 'PNG', 0, 0)
-          pdf.save('autoprint.pdf')
+          pdf.save(nombrePdf)
         })
       }
     }
@@ -386,7 +403,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .signature-pad {
-  border: 1px solid red;
+  border: 1px solid #868686;
 }
 
 #pase-de-lista {

@@ -1,5 +1,6 @@
 <template>
   <v-app>
+  <confirm ref="confirm"></confirm>
     <v-toolbar class="elevation-0">
       <v-btn icon to="/">
         <v-icon>arrow_back</v-icon>
@@ -56,9 +57,12 @@
               </v-btn>
             </td>
           </template>
-          <v-alert slot="no-results" :value="true" color="error" icon="warning">
+          <v-alert slot="no-results" :value="true" color="error">
             Su búsqueda para "{{ search }}" no entregó resultados.
           </v-alert>
+          <template slot="no-data" :value="true" color="error">
+            Lo sentimos, no hay reuniones que mostrar.
+          </template>
         </v-data-table>
       </v-container>
     </v-app>
@@ -67,9 +71,13 @@
 <script>
 // Solo se debe de importar axios donde se necesite.
 import axios from 'axios'
+import Confirm from '@/components/Confirm'
 
 export default {
   name: 'Reuniones',
+  components: {
+    Confirm
+  },
   data: () => ({
     search: '',
     valid: true,
@@ -105,16 +113,22 @@ export default {
     initialize () {},
 
     deleteItem (item) {
-      const index = this.proyecto.reuniones.indexOf(item)
-      var respuesta = confirm('¿Está seguro de eliminar esta reunión?')
-      if (respuesta) {
-        this.proyecto.reuniones.splice(index, 1)
-        // Se actualiza el state de Vuex
-        this.$store.commit('guardarProyecto', this.proyecto)
-        // Se actualiza el proyecto principal en la base de datos
-        axios
-          .put('http://localhost:8080/proyectos/', this.proyecto)
-      }
+      this.$refs.confirm.open(
+        'Eliminar', '¿Está seguro?',
+        {
+          color: 'primary'
+        })
+        .then((confirm) => {
+          const index = this.proyecto.reuniones.indexOf(item)
+          if (confirm) {
+            this.proyecto.reuniones.splice(index, 1)
+            // Se actualiza el state de Vuex
+            this.$store.commit('guardarProyecto', this.proyecto)
+            // Se actualiza el proyecto principal en la base de datos
+            axios
+              .put('http://localhost:8080/proyectos/', this.proyecto)
+          }
+        })
     },
     reunionSeleccionada (reunion) {
       this.$store.commit('setIdReunion', reunion.id)

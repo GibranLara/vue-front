@@ -1,7 +1,8 @@
 <template>
   <v-app>
-<v-container>
-    <h5>{{ this.$store.getters.proyecto }}</h5>
+  <confirm ref="confirm"></confirm>
+  <v-container>
+    <!-- <h5>{{ this.$store.getters.proyecto }}</h5> -->
     <v-toolbar flat color="white">
      <v-text-field
         v-model="search"
@@ -12,7 +13,7 @@
       ></v-text-field>
 
       <v-spacer></v-spacer>
-      <v-dialog v-model="dialog" max-width="500px">
+      <v-dialog v-model="dialog" max-width="500px" @keydown.esc="dialog=false">
         <v-btn slot="activator" color="primary" dark class="mb-2">Nuevo Proyecto</v-btn>
         <v-card>
           <v-card-title>
@@ -76,7 +77,7 @@
         <td class="text-xs-center">
           <v-btn class="info" dark @click="proyectoSeleccionado(props.item)">
             <v-icon dark>visibility</v-icon>
-            {{ props.item.id }}
+            <!-- {{ props.item.id }} -->
           </v-btn>
         </td>
         <td class="justify-center layout px-0">
@@ -91,9 +92,10 @@
       <v-alert slot="no-results" :value="true" color="error" icon="warning">
         Su búsqueda para "{{ search }}" no entregó resultados.
       </v-alert>
-      <!-- <template slot="no-data">
-        <v-btn color="primary" @click="initialize">Reiniciar</v-btn>
-      </template> -->
+      <template slot="no-data" :value="true" color="error" icon="warning">
+        <!-- <v-btn color="primary" @click="initialize">Reiniciar</v-btn> -->
+        Lo sentimos, no hay proyectos que mostrar.
+      </template>
     </v-data-table>
   </v-container>
   </v-app>
@@ -102,9 +104,13 @@
 <script>
 // Solo se debe de importar axios donde se necesite.
 import axios from 'axios'
+import Confirm from '@/components/Confirm'
 
 export default {
   name: 'Proyectos',
+  components: {
+    Confirm
+  },
   data: () => ({
     search: '',
     dialog: false,
@@ -156,6 +162,7 @@ export default {
   watch: {
     dialog (val) {
       val || this.close()
+      this.$refs.form.resetValidation()
     }
   },
   mounted () {},
@@ -184,14 +191,20 @@ export default {
     },
 
     deleteItem (item) {
-      const index = this.proyectos.indexOf(item)
-      var respuesta = confirm('¿Está seguro de eliminar esta reunión?')
-      if (respuesta) {
-        this.proyectos.splice(index, 1)
-        // Se manda la petición delete con el id del objeto
-        axios
-          .delete('http://localhost:8080/proyectos/proyecto/' + item.id)
-      }
+      this.$refs.confirm.open(
+        'Eliminar', '¿Está seguro?',
+        {
+          color: 'primary'
+        })
+        .then((confirm) => {
+          const index = this.proyectos.indexOf(item)
+          if (confirm) {
+            this.proyectos.splice(index, 1)
+            // Se manda la petición delete con el id del objeto
+            axios
+              .delete('http://localhost:8080/proyectos/proyecto/' + item.id)
+          }
+        })
     },
 
     close () {
@@ -227,7 +240,6 @@ export default {
     },
 
     proyectoSeleccionado (proyecto) {
-      console.log(proyecto)
       this.$store.commit('guardarProyecto', proyecto)
       // Mando llamar la ruta 'reuniones', misma que cargar el controlador reuniones
       this.$router.push('reuniones')
@@ -254,5 +266,9 @@ li {
 }
 a {
   color: #42b983;
+}
+
+.swal-title{
+    font-family: 'Lato', 'Helvetica Neue', Helvetica, sans-serif !important;
 }
 </style>

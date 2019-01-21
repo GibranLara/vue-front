@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <confirm ref="confirm"></confirm>
     <v-toolbar class="elevation-0">
       <v-btn icon @click="volver()">
         <v-icon>arrow_back</v-icon>
@@ -9,7 +10,7 @@
     <v-container>
       <!-- Formulario para editar el encabezado de la reunión -->
 <h2 class="text-sm-left mb-1">Detalle Reunión</h2>
-  <v-container grid-list-md>
+  <v-container grid-list-md class="pr-0 pl-0">
     <v-form ref="form_reunion">
       <v-layout row wrap>
         <v-flex md6>
@@ -105,7 +106,9 @@
             <td class="text-xs-center">{{ props.item.nombre }}</td>
             <td class="text-xs-center">{{ props.item.rol }}</td>
             <td class="text-xs-center">{{ props.item.area }}</td>
-            <td class="text-xs-center">{{ props.item.firma }}</td>
+            <td class="text-xs-center">
+              <img :src="props.item.firma" v-bind:alt="props.item.firma" width=100 height="auto">
+              </td>
             <td class="justify-center layout px-0">
               <v-icon medium class="mr-2" @click="editItem(props.item)">
                 edit
@@ -118,9 +121,9 @@
           <v-alert slot="no-results" :value="true" color="error" icon="warning">
             Su búsqueda para "{{ search }}" no entregó resultados.
           </v-alert>
-          <!-- <template slot="no-data">
-            <v-btn color="primary" @click="initialize">Reiniciar</v-btn>
-          </template> -->
+          <template slot="no-data" :value="true" color="error">
+            Lo sentimos, no hay participantes que mostrar.
+          </template>
         </v-data-table>
       </v-container>
     </v-app>
@@ -130,9 +133,13 @@
 // Solo se debe de importar axios donde se necesite.
 import axios from 'axios'
 import ObjectID from 'bson-objectid'
+import Confirm from '@/components/Confirm'
 
 export default {
   name: 'Reunion',
+  components: {
+    Confirm
+  },
   data: () => ({
     search: '',
     dialog: false,
@@ -195,6 +202,7 @@ export default {
   watch: {
     dialog (val) {
       val || this.close()
+      this.$refs.form.resetValidation()
     }
   },
   mounted () {
@@ -228,12 +236,19 @@ export default {
       // Recupero el indice del participante que se está editando
       const index = this.reunion.participantes.indexOf(item)
       // Pregunto si se desea eliminar
-      var respuesta = confirm('¿Está seguro de eliminar esta reunión?')
       // Si la respuesta es correcta, se elimina el elemento del array de participantes
-      // Splice (indice, cantidad de elementos a borrar)
-      if (respuesta) {
-        this.reunion.participantes.splice(index, 1)
-      }
+      // Se elimina temporalmente del array
+      this.$refs.confirm.open(
+        'Eliminar', '¿Está seguro?',
+        {
+          color: 'primary'
+        })
+        .then((confirm) => {
+          if (confirm) {
+            // Splice (indice, cantidad de elementos a borrar)
+            this.reunion.participantes.splice(index, 1)
+          }
+        })
     },
 
     close () {
