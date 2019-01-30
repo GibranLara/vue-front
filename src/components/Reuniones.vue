@@ -289,7 +289,12 @@ export default {
           }).then(canvas => {
           var image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream')
           var link = document.createElement('a')
-          link.download = new Date().toJSON().slice(0, 10).replace(/-/g, '.') + '.png'
+
+          var fechaHoy = new Date()
+          fechaHoy.setMinutes(fechaHoy.getMinutes() - fechaHoy.getTimezoneOffset())
+          fechaHoy.toISOString().slice(0, 10)
+
+          link.download = fechaHoy.toJSON().slice(0, 10).replace(/-/g, '.') + '.png'
           link.href = image
           link.click()
         })
@@ -307,7 +312,11 @@ export default {
             orientation: 'landscape'
           })
 
-          let nombrePdf = new Date().toJSON().slice(0, 10).replace(/-/g, '.') + '.pdf'
+          var fechaHoy = new Date()
+          fechaHoy.setMinutes(fechaHoy.getMinutes() - fechaHoy.getTimezoneOffset())
+          fechaHoy.toISOString().slice(0, 10)
+
+          let nombrePdf = fechaHoy.toJSON().slice(0, 10).replace(/-/g, '.') + '.pdf'
           pdf.addImage(image, 'PNG', 0, 0)
           pdf.save(nombrePdf)
         })
@@ -319,6 +328,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+.theme--light.application {
+    background: #ecebeb !important;
+    color: rgba(0,0,0,.87);
+}
+
 #pase-de-lista {
   display: none;
 }

@@ -303,4 +303,8 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.theme--light.application {
+    background: #ecebeb !important;
+    color: rgba(0,0,0,.87);
+}
 </style>
