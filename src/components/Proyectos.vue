@@ -1,6 +1,10 @@
 <template>
   <v-app>
   <confirm ref="confirm"></confirm>
+  <v-toolbar class="elevation-0">
+    <!-- <v-toolbar-title>Control de reuniones </v-toolbar-title> -->
+    <img src="../assets/logo-huerta.png" alt="La Huerta" style="height:70%;">
+  </v-toolbar>
   <v-container>
     <!-- <h5>{{ this.$store.getters.proyecto }}</h5> -->
     <v-toolbar flat color="white">
@@ -132,8 +136,8 @@ export default {
         sortable: false,
         value: 'nombre'
       },
-      { text: 'Área', align: 'center', value: 'area' },
-      { text: 'Fecha', align: 'center', value: 'fecha' },
+      { text: 'Área', align: 'center', value: 'area', sortable: false },
+      { text: 'Fecha', align: 'center', value: 'fecha', sortable: false },
       { text: 'Reuniones', align: 'center', value: 'proyecto', sortable: false },
       { text: 'Acciones', align: 'center', value: 'proyecto', sortable: false }
     ],
