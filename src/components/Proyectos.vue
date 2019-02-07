@@ -47,12 +47,32 @@
                     </v-text-field>
                   </v-flex>
                   <v-flex xs12 sm12 md6>
-                    <v-text-field
-                    v-model="editedItem.fecha"
-                    :rules="reglasFecha"
-                    label="Fecha"
-                    required>
-                    </v-text-field>
+                    <v-menu
+                      ref="menu"
+                      v-model="menu"
+                      :close-on-content-click="false"
+                      :nudge-right="40"
+                      :return-value.sync="date"
+                      lazy
+                      transition="scale-transition"
+                      offset-y
+                      full-width
+                      min-width="290px"
+                    >
+                      <v-text-field
+                        slot="activator"
+                        v-model="date"
+                        label="Seleccione la fecha:"
+                        prepend-icon="event"
+                        readonly
+                        :rules="reglasFecha"
+                      ></v-text-field>
+                      <v-date-picker v-model="date" no-title scrollable>
+                        <v-spacer></v-spacer>
+                        <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
+                        <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+                      </v-date-picker>
+                    </v-menu>
                   </v-flex>
               </v-layout>
             </v-container>
@@ -119,6 +139,8 @@ export default {
     search: '',
     dialog: false,
     valid: true,
+    date: null,
+    menu: false,
     reglasNombre: [
       v => !!v || 'El nombre es requerido.'
     ],
@@ -169,7 +191,9 @@ export default {
       this.$refs.form.resetValidation()
     }
   },
-  mounted () {},
+  mounted () {
+    this.date = this.getfechaHoy()
+  },
   created () {
     axios
       .get('http://localhost:8080/proyectos/all')
@@ -180,7 +204,7 @@ export default {
       })
       .catch(e => {
         this.errors.push(e)
-      })
+      })   
   },
   methods: {
     initialize () {},
@@ -247,6 +271,12 @@ export default {
       this.$store.commit('guardarProyecto', proyecto)
       // Mando llamar la ruta 'reuniones', misma que cargar el controlador reuniones
       this.$router.push('reuniones')
+    },
+
+    getfechaHoy () {
+      let fechaHoy = new Date()
+      fechaHoy.setMinutes(fechaHoy.getMinutes() - fechaHoy.getTimezoneOffset())
+      return fechaHoy.toJSON().slice(0, 10)
     }
   }
 }
