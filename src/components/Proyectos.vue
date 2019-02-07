@@ -146,7 +146,7 @@ export default {
     ],
     reglasFecha: [
       v => !!v || 'La fecha es requerida.'
-    ],    
+    ],
     headers: [
       {
         text: 'Proyecto',
@@ -189,7 +189,7 @@ export default {
       this.$refs.form.resetValidation()
     },
     pagination: {
-      handler () {        
+      handler () {
       },
       deep: true
     }
