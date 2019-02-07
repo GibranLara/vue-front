@@ -52,7 +52,6 @@
                       v-model="menu"
                       :close-on-content-click="false"
                       :nudge-right="40"
-                      :return-value.sync="date"
                       lazy
                       transition="scale-transition"
                       offset-y
@@ -61,16 +60,13 @@
                     >
                       <v-text-field
                         slot="activator"
-                        v-model="date"
+                        v-model="editedItem.fecha"
                         label="Seleccione la fecha:"
                         prepend-icon="event"
                         readonly
                         :rules="reglasFecha"
                       ></v-text-field>
-                      <v-date-picker v-model="date" no-title scrollable>
-                        <v-spacer></v-spacer>
-                        <v-btn flat color="primary" @click="menu = false">Cancel</v-btn>
-                        <v-btn flat color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+                      <v-date-picker v-model="editedItem.fecha" no-title @input="menu=false">
                       </v-date-picker>
                     </v-menu>
                   </v-flex>
@@ -139,7 +135,7 @@ export default {
     search: '',
     dialog: false,
     valid: true,
-    date: null,
+    date: '',
     menu: false,
     reglasNombre: [
       v => !!v || 'El nombre es requerido.'
@@ -193,6 +189,9 @@ export default {
   },
   mounted () {
     this.date = this.getfechaHoy()
+
+    this.editedItem.fecha = this.date
+    this.defaultItem.fecha = this.date
   },
   created () {
     axios
@@ -204,7 +203,7 @@ export default {
       })
       .catch(e => {
         this.errors.push(e)
-      })   
+      })
   },
   methods: {
     initialize () {},

@@ -22,12 +22,28 @@
             ></v-text-field>
         </v-flex>
         <v-flex md6>
-         <v-text-field
-            v-model="reunion.fecha"
-            :rules="fechaReunionRules"
-            label="Fecha"
-            required
+          <v-menu
+            ref="menu"
+            v-model="menu"
+            :close-on-content-click="false"
+            :nudge-right="40"
+            lazy
+            transition="scale-transition"
+            offset-y
+            full-width
+            min-width="290px"
+          >
+            <v-text-field
+              slot="activator"
+              v-model="reunion.fecha"
+              label="Seleccione la fecha:"
+              prepend-icon="event"
+              readonly
+              :rules="fechaReunionRules"
             ></v-text-field>
+            <v-date-picker v-model="reunion.fecha" no-title @input="menu=false">
+            </v-date-picker>
+          </v-menu>
         </v-flex>
         <v-btn color="primary" @click.native="save">Guardar</v-btn>
       </v-layout>
@@ -144,6 +160,8 @@ export default {
     search: '',
     dialog: false,
     valid: true,
+    date: '',
+    menu: false,
     proyecto: '',
     reunion: {
       id: '',
@@ -218,6 +236,11 @@ export default {
       // En la propiedad reunión guardo una copia POR REFERENCIA
       // del objeto de la reunión trae la copia local del
       this.reunion = this.proyecto.reuniones.find(x => x.id === reunionIndex)
+    } else {
+      this.date = this.getfechaHoy()
+
+      this.reunion.fecha = this.date
+      this.reunion.fecha = this.date
     }
   },
 
@@ -296,6 +319,11 @@ export default {
     volver () {
       this.$store.commit('setIdReunion', '')
       this.$router.push('reuniones')
+    },
+    getfechaHoy () {
+      let fechaHoy = new Date()
+      fechaHoy.setMinutes(fechaHoy.getMinutes() - fechaHoy.getTimezoneOffset())
+      return fechaHoy.toJSON().slice(0, 10)
     }
   }
 }
