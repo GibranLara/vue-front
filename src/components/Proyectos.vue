@@ -86,8 +86,9 @@
     <v-data-table
       :headers="headers"
       :items="proyectos"
+      :pagination.sync="pagination"
       :search="search"
-      hide-actions
+      :loading="loading"
       class="elevation-1"
     >
       <template slot="items" slot-scope="props">
@@ -145,8 +146,7 @@ export default {
     ],
     reglasFecha: [
       v => !!v || 'La fecha es requerida.'
-    ],
-    loading: true,
+    ],    
     headers: [
       {
         text: 'Proyecto',
@@ -161,6 +161,8 @@ export default {
     ],
     totalProyectos: 0,
     proyectos: [],
+    loading: false,
+    pagination: {},
     editedIndex: -1,
     editedItem: {
       nombre: '',
@@ -185,6 +187,11 @@ export default {
     dialog (val) {
       val || this.close()
       this.$refs.form.resetValidation()
+    },
+    pagination: {
+      handler () {        
+      },
+      deep: true
     }
   },
   mounted () {

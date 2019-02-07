@@ -9,6 +9,9 @@ import Vuetify from 'vuetify'
 import 'material-design-icons-iconfont/dist/material-design-icons.css' // Forzozamente deben cargarse antes que el css main
 import 'vuetify/dist/vuetify.min.css'
 
+// Traducciones
+import es from './i18n/vuetify/es'
+
 Vue.use(Vuetify, {
   theme: {
     // 393e44, 1D2731, 1A2930
@@ -19,6 +22,10 @@ Vue.use(Vuetify, {
     info: '#2196F3',
     success: '#4CAF50',
     warning: '#FFC107'
+  },
+  lang:{
+    locales: { es },
+    current: 'es'
   }
 })
 
