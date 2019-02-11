@@ -159,10 +159,12 @@ export default {
       { text: 'Reuniones', align: 'center', value: 'proyecto', sortable: false },
       { text: 'Acciones', align: 'center', value: 'proyecto', sortable: false }
     ],
+    rowsPerPageItems: [5, 10, 20],
     totalProyectos: 0,
     proyectos: [],
     loading: false,
-    pagination: {},
+    pagination: {
+    },
     editedIndex: -1,
     editedItem: {
       nombre: '',
@@ -189,31 +191,66 @@ export default {
       this.$refs.form.resetValidation()
     },
     pagination: {
-      handler () {
-      },
-      deep: true
+      async handler () {
+        this.getDatosPaginados()
+      }
     }
   },
   mounted () {
-    this.date = this.getfechaHoy()
+    // this.date = this.getfechaHoy()
 
-    this.editedItem.fecha = this.date
-    this.defaultItem.fecha = this.date
+    // this.editedItem.fecha = this.date
+    // this.defaultItem.fecha = this.date
+
+    // const size = this.pagination.rowsPerPage
+    // const page = this.pagination.page
+
+    // axios
+    //   .get(`http://localhost:8080/proyectos/proyectospaginados?page=${page}&size=${size}`)
+    //   .then(datos => {
+    //     // Aquí se recuperan los datos. En el objeto datos y la propiedad data es
+    //     // donde viene el arreglo de objetos.
+    //     this.proyectos = datos.data
+    //     console.log(this.proyectos)
+    //   })
+    //   .catch(e => {
+    //     this.errors.push(e)
+    //   })
   },
   created () {
-    axios
-      .get('http://localhost:8080/proyectos/all')
-      .then(datos => {
-        // Aquí se recuperan los datos. En el objeto datos y la propiedad data es
-        // donde viene el arreglo de objetos.
-        this.proyectos = datos.data
-      })
-      .catch(e => {
-        this.errors.push(e)
-      })
+
   },
   methods: {
     initialize () {},
+
+    getDatosPaginados () {
+      this.loading = true
+      const size = this.pagination.rowsPerPage
+      const page = this.pagination.page - 1
+
+      // axios
+      //   .get(`http://localhost:8080/proyectos/proyectospaginados?page=${page}&size=${size}`)
+      //   .then(datos => {
+      //     // Aquí se recuperan los datos. En el objeto datos y la propiedad data es
+      //     // donde viene el arreglo de objetos.
+      //     this.proyectos = datos.data
+      //     console.log(this.proyectos)
+      //   })
+      //   .catch(e => {
+      //     this.errors.push(e)
+      //   })
+      console.log(size)
+      console.log(page)
+      axios
+        .get(`http://localhost:8080/proyectos/proyectospaginados?page=${page}&size=${size}`)
+        .then(datos => {
+          this.proyectos = datos.data
+          console.log('Hola')
+          console.log(this.proyectos)
+        })
+        .catch(err => console.log(err))
+        .finally(() => { this.loading = false })
+    },
 
     editItem (item) {
       // Saco el índice del objeto 'item' el cual corresponde a un proyecto
