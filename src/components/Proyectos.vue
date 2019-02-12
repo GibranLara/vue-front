@@ -88,6 +88,8 @@
       :items="proyectos"
       :pagination.sync="pagination"
       :search="search"
+      :total-items="total"
+      :rows-per-page-items="rowsPerPageItems"
       :loading="loading"
       class="elevation-1"
     >
@@ -160,7 +162,7 @@ export default {
       { text: 'Acciones', align: 'center', value: 'proyecto', sortable: false }
     ],
     rowsPerPageItems: [5, 10, 20],
-    totalProyectos: 0,
+    total: 0,
     proyectos: [],
     loading: false,
     pagination: {
@@ -244,9 +246,10 @@ export default {
       axios
         .get(`http://localhost:8080/proyectos/proyectospaginados?page=${page}&size=${size}`)
         .then(datos => {
-          this.proyectos = datos.data
-          console.log('Hola')
-          console.log(this.proyectos)
+          // console.log(datos)
+          this.proyectos = datos.data.content
+          this.pagination.totalItems = datos.data.totalElements
+          this.total = datos.data.totalElements
         })
         .catch(err => console.log(err))
         .finally(() => { this.loading = false })
