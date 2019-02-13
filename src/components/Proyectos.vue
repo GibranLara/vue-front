@@ -87,9 +87,7 @@
       :headers="headers"
       :items="proyectos"
       :pagination.sync="pagination"
-      :search="search"
-      :total-items="total"
-      :rows-per-page-items="rowsPerPageItems"
+      :total-items="totalProyectos"
       :loading="loading"
       class="elevation-1"
     >
@@ -150,21 +148,16 @@ export default {
       v => !!v || 'La fecha es requerida.'
     ],
     headers: [
-      {
-        text: 'Proyecto',
-        align: 'center',
-        sortable: false,
-        value: 'nombre'
-      },
+      { text: 'Proyecto', align: 'center', sortable: false, value: 'nombre' },
       { text: 'Área', align: 'center', value: 'area', sortable: false },
       { text: 'Fecha', align: 'center', value: 'fecha', sortable: false },
       { text: 'Reuniones', align: 'center', value: 'proyecto', sortable: false },
       { text: 'Acciones', align: 'center', value: 'proyecto', sortable: false }
     ],
     rowsPerPageItems: [5, 10, 20],
-    total: 0,
+    totalProyectos: 0,
     proyectos: [],
-    loading: false,
+    loading: true,
     pagination: {
     },
     editedIndex: -1,
@@ -193,31 +186,31 @@ export default {
       this.$refs.form.resetValidation()
     },
     pagination: {
-      async handler () {
+      handler () {
         this.getDatosPaginados()
       }
     }
   },
   mounted () {
-    // this.date = this.getfechaHoy()
+  //   // this.date = this.getfechaHoy()
 
-    // this.editedItem.fecha = this.date
-    // this.defaultItem.fecha = this.date
+  //   // this.editedItem.fecha = this.date
+  //   // this.defaultItem.fecha = this.date
 
-    // const size = this.pagination.rowsPerPage
-    // const page = this.pagination.page
+  //   // const size = this.pagination.rowsPerPage
+  //   // const page = this.pagination.page
 
-    // axios
-    //   .get(`http://localhost:8080/proyectos/proyectospaginados?page=${page}&size=${size}`)
-    //   .then(datos => {
-    //     // Aquí se recuperan los datos. En el objeto datos y la propiedad data es
-    //     // donde viene el arreglo de objetos.
-    //     this.proyectos = datos.data
-    //     console.log(this.proyectos)
-    //   })
-    //   .catch(e => {
-    //     this.errors.push(e)
-    //   })
+  //   // axios
+  //   //   .get(`http://localhost:8080/proyectos/proyectospaginados?page=${page}&size=${size}`)
+  //   //   .then(datos => {
+  //   //     // Aquí se recuperan los datos. En el objeto datos y la propiedad data es
+  //   //     // donde viene el arreglo de objetos.
+  //   //     this.proyectos = datos.data
+  //   //     console.log(this.proyectos)
+  //   //   })
+  //   //   .catch(e => {
+  //   //     this.errors.push(e)
+  //   //   })
   },
   created () {
 
@@ -230,26 +223,12 @@ export default {
       const size = this.pagination.rowsPerPage
       const page = this.pagination.page - 1
 
-      // axios
-      //   .get(`http://localhost:8080/proyectos/proyectospaginados?page=${page}&size=${size}`)
-      //   .then(datos => {
-      //     // Aquí se recuperan los datos. En el objeto datos y la propiedad data es
-      //     // donde viene el arreglo de objetos.
-      //     this.proyectos = datos.data
-      //     console.log(this.proyectos)
-      //   })
-      //   .catch(e => {
-      //     this.errors.push(e)
-      //   })
-      console.log(size)
-      console.log(page)
       axios
         .get(`http://localhost:8080/proyectos/proyectospaginados?page=${page}&size=${size}`)
         .then(datos => {
-          // console.log(datos)
+          console.log(datos)
           this.proyectos = datos.data.content
-          this.pagination.totalItems = datos.data.totalElements
-          this.total = datos.data.totalElements
+          this.totalProyectos = datos.data.totalElements
         })
         .catch(err => console.log(err))
         .finally(() => { this.loading = false })
