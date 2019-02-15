@@ -1,9 +1,9 @@
 <template>
   <v-app>
   <confirm ref="confirm"></confirm>
-  <v-toolbar class="elevation-0">
+  <v-toolbar class="relieve-toolbar">
     <!-- <v-toolbar-title>Control de reuniones </v-toolbar-title> -->
-    <img src="../assets/logo-huerta.png" alt="La Huerta" style="height:70%;">
+    <img src="../assets/logo-huerta.png" alt="La Huerta" style="height:73%;">
   </v-toolbar>
   <v-container>
     <!-- <h5>{{ this.$store.getters.proyecto }}</h5> -->
@@ -88,6 +88,7 @@
       :items="proyectos"
       :pagination.sync="pagination"
       :total-items="totalProyectos"
+      :rows-per-page-items="rowsPerPageItems"
       :loading="loading"
       class="elevation-1"
     >
@@ -189,28 +190,15 @@ export default {
       handler () {
         this.getDatosPaginados()
       }
+    },
+    search: {
+      handler () {
+        this.getDatosPaginados()
+      }
     }
   },
   mounted () {
-  //   // this.date = this.getfechaHoy()
 
-  //   // this.editedItem.fecha = this.date
-  //   // this.defaultItem.fecha = this.date
-
-  //   // const size = this.pagination.rowsPerPage
-  //   // const page = this.pagination.page
-
-  //   // axios
-  //   //   .get(`http://localhost:8080/proyectos/proyectospaginados?page=${page}&size=${size}`)
-  //   //   .then(datos => {
-  //   //     // Aquí se recuperan los datos. En el objeto datos y la propiedad data es
-  //   //     // donde viene el arreglo de objetos.
-  //   //     this.proyectos = datos.data
-  //   //     console.log(this.proyectos)
-  //   //   })
-  //   //   .catch(e => {
-  //   //     this.errors.push(e)
-  //   //   })
   },
   created () {
 
@@ -222,11 +210,12 @@ export default {
       this.loading = true
       const size = this.pagination.rowsPerPage
       const page = this.pagination.page - 1
+      // const filter = this.search
+      const busqueda = this.search
 
       axios
-        .get(`http://localhost:8080/proyectos/proyectospaginados?page=${page}&size=${size}`)
+        .get(`http://localhost:8080/proyectos/proyectospaginados?page=${page}&size=${size}&filter=${busqueda}`)
         .then(datos => {
-          console.log(datos)
           this.proyectos = datos.data.content
           this.totalProyectos = datos.data.totalElements
         })
@@ -335,5 +324,9 @@ a {
 
 .swal-title{
     font-family: 'Lato', 'Helvetica Neue', Helvetica, sans-serif !important;
+}
+
+.relieve-toolbar {
+  border-bottom: 1px solid lightgray !important;
 }
 </style>
