@@ -334,7 +334,7 @@ export default {
       }
 
       // Mando el request para guardar la firma
-      axios.put('http://localhost:8080/proyectos/participante/firma', firmaRequest)
+      axios.put(`${process.env.ROOT_API}/proyectos/participante/firma`, firmaRequest)
         .then(proyecto => {
           this.proyecto = proyecto.data
           this.$store.commit('guardarProyecto', this.proyecto)

@@ -241,7 +241,7 @@ export default {
             this.$store.commit('guardarProyecto', this.proyecto)
             // Se actualiza el proyecto principal en la base de datos
             axios
-              .put('http://localhost:8080/proyectos/', this.proyecto)
+              .put(`${process.env.ROOT_API}/proyectos/`, this.proyecto)
           }
         })
     },

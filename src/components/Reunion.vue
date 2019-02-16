@@ -300,7 +300,7 @@ export default {
         // Entonces se guarda en server el 'proyecto' completo con todos los cambios,
         // es decir, proyecto, reuniones y participantes
         axios
-          .put('http://localhost:8080/proyectos/', this.proyecto)
+          .put(`${process.env.ROOT_API}/proyectos/`, this.proyecto)
         this.$router.push('reuniones')
       }
     },

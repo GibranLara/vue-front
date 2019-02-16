@@ -216,7 +216,7 @@ export default {
       const busqueda = this.search
 
       axios
-        .get(`http://localhost:8080/proyectos/proyectospaginados?page=${page}&size=${size}&filter=${busqueda}`)
+        .get(`${process.env.ROOT_API}/proyectos/proyectospaginados?page=${page}&size=${size}&filter=${busqueda}`)
         .then(datos => {
           this.proyectos = datos.data.content
           this.totalProyectos = datos.data.totalElements
@@ -246,7 +246,7 @@ export default {
             this.proyectos.splice(index, 1)
             // Se manda la petición delete con el id del objeto
             axios
-              .delete('http://localhost:8080/proyectos/proyecto/' + item.id)
+              .delete(`${process.env.ROOT_API}/proyectos/proyecto/${item.id}`)
               .then(() => {
                 this.totalProyectos = this.totalProyectos - 1
               })
@@ -269,12 +269,12 @@ export default {
           Object.assign(this.proyectos[this.editedIndex], this.editedItem)
           // console.log(this.proyectos[this.editedIndex])
           axios
-            .put('http://localhost:8080/proyectos/', this.proyectos[this.editedIndex])
+            .put(`${process.env.ROOT_API}/proyectos/`, this.proyectos[this.editedIndex])
         } else {
           console.log('Es un nuevo proyecto.')
           // console.log(this.editedItem)
           axios
-            .post('http://localhost:8080/proyectos/', this.editedItem)
+            .post(`${process.env.ROOT_API}/proyectos/`, this.editedItem)
             .then(proyecto => {
               this.proyectos.push(proyecto.data)
               this.totalProyectos = this.totalProyectos + 1
