@@ -248,7 +248,7 @@ export default {
             axios
               .delete('http://localhost:8080/proyectos/proyecto/' + item.id)
               .then(() => {
-                this.getDatosPaginados()
+                this.totalProyectos = this.totalProyectos - 1
               })
           }
         })
@@ -277,7 +277,7 @@ export default {
             .post('http://localhost:8080/proyectos/', this.editedItem)
             .then(proyecto => {
               this.proyectos.push(proyecto.data)
-              this.getDatosPaginados()
+              this.totalProyectos = this.totalProyectos + 1
             })
             .catch(e => {
               this.errors.push(e)
