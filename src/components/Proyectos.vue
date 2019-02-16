@@ -1,7 +1,7 @@
 <template>
   <v-app>
   <confirm ref="confirm"></confirm>
-  <v-toolbar class="relieve-toolbar">
+  <v-toolbar flat class="relieve-toolbar">
     <!-- <v-toolbar-title>Control de reuniones </v-toolbar-title> -->
     <img src="../assets/logo-huerta.png" alt="La Huerta" style="height:73%;">
   </v-toolbar>
@@ -198,7 +198,9 @@ export default {
     }
   },
   mounted () {
-
+    this.date = this.getfechaHoy()
+    this.editedItem.fecha = this.date
+    this.defaultItem.fecha = this.date
   },
   created () {
 
@@ -245,6 +247,9 @@ export default {
             // Se manda la petición delete con el id del objeto
             axios
               .delete('http://localhost:8080/proyectos/proyecto/' + item.id)
+              .then(() => {
+                this.getDatosPaginados()
+              })
           }
         })
     },
@@ -272,6 +277,7 @@ export default {
             .post('http://localhost:8080/proyectos/', this.editedItem)
             .then(proyecto => {
               this.proyectos.push(proyecto.data)
+              this.getDatosPaginados()
             })
             .catch(e => {
               this.errors.push(e)

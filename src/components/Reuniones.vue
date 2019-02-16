@@ -33,8 +33,11 @@
         <v-data-table
           :headers="headers"
           :items="proyecto.reuniones"
+          :pagination.sync="pagination"
+          :total-items="totalReuniones"
+          :rows-per-page-items="rowsPerPageItems"
+          :loading="loading"
           :search="search"
-          hide-actions
           class="elevation-1"
         >
           <template slot="items" slot-scope="props">
@@ -65,7 +68,8 @@
           </template>
         </v-data-table>
       </v-container>
-          <!-- Dialogo de descarga -->
+
+    <!-- Dialogo de descarga -->
     <v-dialog v-model="dialog_descarga" max-width="500px" @keydown.esc="dialog_descarga=false">
       <v-card>
         <v-card-title>
@@ -133,9 +137,6 @@
             <img :src="props.item.firma" v-bind:alt="props.item.firma" width=100 height="auto">
           </td>
         </template>
-        <v-alert slot="no-results" :value="true" color="error" icon="warning">
-          Su búsqueda para "{{ search }}" no entregó resultados.
-        </v-alert>
       </v-data-table>
 
       <v-container class="pa-0 ma-0 grid-list-md" id="footer-pase-de-lista">
@@ -178,7 +179,11 @@ export default {
     valid: true,
     proyecto: '',
     loading: true,
+    rowsPerPageItems: [5, 10, 20],
     dialog_descarga: false,
+    totalReuniones: 0,
+    pagination: {
+    },
     reunion: {
       id: '',
       objetivo: '',
@@ -186,13 +191,8 @@ export default {
       participantes: []
     },
     headers: [
-      {
-        text: 'Objetivo',
-        align: 'center',
-        sortable: false,
-        value: 'objetivo'
-      },
-      { text: 'Fecha', align: 'center', value: 'fecha' },
+      { text: 'Objetivo', align: 'center', sortable: false, value: 'objetivo' },
+      { text: 'Fecha', align: 'center', sortable: false, value: 'fecha' },
       { text: 'Acciones', align: 'center', value: 'reunion', sortable: false },
       { text: 'Descargar', align: 'center', value: 'reunion', sortable: false }
     ],
@@ -204,12 +204,11 @@ export default {
         value: 'nomina',
         class: ['grey lighten-3', 'black--text']
       },
-      {text: 'Nombre', align: 'center', value: 'nombre', sortable: false, class: ['grey lighten-3', 'black--text']},
+      { text: 'Nombre', align: 'center', value: 'nombre', sortable: false, class: ['grey lighten-3', 'black--text'] },
       { text: 'Rol/Puesto', align: 'center', value: 'fecha', sortable: false, class: ['grey lighten-3', 'black--text'] },
       { text: 'Área', align: 'center', value: 'rol', sortable: false, class: ['grey lighten-3', 'black--text'] },
       { text: 'Firma', align: 'center', value: 'area', sortable: false, class: ['grey lighten-3', 'black--text'] }
-    ],
-    totalReuniones: 0
+    ]
   }),
 
   computed: {
@@ -222,6 +221,7 @@ export default {
   mounted () {},
   created () {
     this.proyecto = this.$store.getters.proyecto
+    this.loading = false
   },
 
   methods: {
