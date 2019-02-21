@@ -96,7 +96,7 @@
       </v-card>
     </v-dialog>
     <!--Div oculto para imprimir -->
-    <v-container class="fluid page pt-0" id="pase-de-lista">
+    <div class="ocultar-pase page pt-0" id="pase-de-lista">
       <v-container grid-list-md class="pa-0 mt-3">
         <v-layout row wrap>
             <v-flex md12>
@@ -104,7 +104,7 @@
             </v-flex>
         </v-layout>
         <v-form ref="form_reunion">
-          <v-layout row wrap>
+          <v-layout row wrap class="px-5">
             <v-flex md9>
               <v-text-field
                   :value="'Objetivo: '+reunion.objetivo"
@@ -123,6 +123,7 @@
         </v-form>
       </v-container>
       <!-- Encabezado de la datatable -->
+      <div class="px-5">
       <v-data-table
         :headers="headers_print"
         :items="reunion.participantes"
@@ -138,7 +139,7 @@
           </td>
         </template>
       </v-data-table>
-
+      </div>
       <v-container class="pa-0 ma-0 grid-list-md" id="footer-pase-de-lista">
         <v-layout row wrap>
             <v-flex class="pa-0">
@@ -158,7 +159,7 @@
             </v-flex>
         </v-layout>
       </v-container>
-    </v-container>
+    </div>
     </v-app>
 </template>
 
@@ -281,8 +282,9 @@ export default {
         html2canvas(
           document.querySelector('#pase-de-lista'),
           {
-          // El documento se clona debido a que si selecciona un div oculto,
-          // este no permite crear la imagen
+            scale: 1.5,
+            // El documento se clona debido a que si selecciona un div oculto,
+            // este no permite crear la imagen
             onclone: function (clonedDoc) {
               clonedDoc.getElementById('pase-de-lista').style.display = 'block'
             }
@@ -334,17 +336,16 @@ export default {
     color: rgba(0,0,0,.87);
 }
 
-#pase-de-lista {
+.ocultar-pase {
   display: none;
 }
 
 .page {
     position: relative;
-    padding-bottom: 100px;
     width: 29.7cm;
-    min-height: 21.5cm;
-    padding: 2cm;
-    margin: 1cm auto;
+    min-height: 21.6cm;
+    max-height: 21.6cm;
+    margin: 0 auto;
     border: 1px #D3D3D3 solid;
     border-radius: 5px;
     background: white;
@@ -355,6 +356,6 @@ export default {
   position: absolute;
   bottom: 0;
   height: 100px;
-  width: 86.5%;
+  width: 100%;
 }
 </style>
