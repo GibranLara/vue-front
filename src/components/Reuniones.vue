@@ -160,7 +160,7 @@
         </v-layout>
       </v-container>
     </div>
-    </v-app>
+  </v-app>
 </template>
 
 <script>
@@ -345,7 +345,7 @@ export default {
     width: 29.7cm;
     min-height: 21.6cm;
     max-height: 21.6cm;
-    margin: 0 auto;
+    margin: 1cm auto;
     border: 1px #D3D3D3 solid;
     border-radius: 5px;
     background: white;
